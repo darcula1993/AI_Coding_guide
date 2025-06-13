@@ -81,7 +81,6 @@ JWT过期时间设置为24小时，暂时不需要记录失败次数和"记住�
 ```text
 AI: 好的，我先实现登录的核心逻辑。基于你的需求，我会创建一个login函数：
 
-```python
 from flask import request, jsonify
 from werkzeug.security import check_password_hash
 import jwt
@@ -129,7 +128,7 @@ def login():
         
     except Exception as e:
         return jsonify({'error': '服务器内部错误'}), 500
-```
+
 
 这个实现包含了我们讨论的所有要点。你想先测试一下这个版本，还是有什么地方需要调整？
 ```
@@ -151,7 +150,7 @@ Human: 我要开始一个新功能的开发，先让我介绍一下项目情况�
 - 当前阶段：已完成用户认证，正在开发商品管理
 
 **代码结构：**
-```
+
 app/
 ├── models/
 │   ├── user.py
@@ -161,7 +160,7 @@ app/
 │   └── products.py
 └── utils/
     └── auth.py
-```
+
 
 **当前任务：**
 需要为商品管理添加分类功能，用户可以按分类浏览商品。
@@ -178,7 +177,6 @@ AI: 基于你的项目情况，我来设计商品分类的数据模型。
 
 **数据模型设计：**
 
-```python
 # app/models/category.py
 from app import db
 from datetime import datetime
@@ -212,7 +210,6 @@ class Category(db.Model):
             'sort_order': self.sort_order,
             'is_active': self.is_active
         }
-```
 
 然后需要更新Product模型来建立关联关系。你觉得这个设计怎么样？有什么需要调整的地方吗？
 ```
@@ -228,9 +225,9 @@ Human: 我遇到了一个问题，需要你帮忙分析。
 用户登录时偶尔出现JWT token无效的错误，但重新登录就正常了。
 
 **错误信息：**
-```
+
 jwt.exceptions.InvalidTokenError: Signature verification failed
-```
+
 
 **复现步骤：**
 1. 用户正常登录获取token
@@ -245,7 +242,7 @@ jwt.exceptions.InvalidTokenError: Signature verification failed
 - 部署方式：Gunicorn + Nginx
 
 **相关代码：**
-```python
+
 # token生成
 payload = {
     'user_id': user.id,
@@ -258,7 +255,7 @@ try:
     payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
 except jwt.InvalidTokenError:
     return jsonify({'error': 'Invalid token'}), 401
-```
+
 
 你觉得可能是什么原因？
 ```
@@ -272,14 +269,14 @@ AI: 基于你提供的信息，我分析了几个可能的原因：
 
 **排查方法：**
 1. 检查服务器时间同步：
-```bash
+
 timedatectl status
 # 如果NTP同步关闭，执行：
 sudo timedatectl set-ntp true
-```
+
 
 2. 在JWT生成时添加调试信息：
-```python
+
 from datetime import datetime
 import pytz
 
@@ -295,7 +292,7 @@ payload = {
     'iat': current_time,  # 添加签发时间
     'exp': expire_time
 }
-```
+
 
 **其他可能原因：**
 - Gunicorn多进程间SECRET_KEY不一致
