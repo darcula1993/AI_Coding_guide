@@ -179,7 +179,7 @@ def diagnose_ai_function():
 
 ### 2. 与AI协作调试
 
-```
+```text
 Human: 我的用户注册API出现问题，返回500错误。以下是错误日志：
 
 ```
